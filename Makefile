@@ -6,3 +6,6 @@ serve:
 
 helloworld:
 	bin/client send "Hello World"
+
+generate:
+	protoc -I . ./proto/chat.proto --go_out=plugins=grpc:.
