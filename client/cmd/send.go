@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type RunFunc func(cmd *cobra.Command, args []string)
-
 func NewSendCmd(c pb.ChatClient) *cobra.Command {
 	return &cobra.Command{
 		Use:   "send",
@@ -25,7 +23,7 @@ func NewSendCmd(c pb.ChatClient) *cobra.Command {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			resp, err := c.Send(context.Background(), &pb.Request{Message: args[0]})
+			resp, err := c.Send(context.Background(), &pb.SendRequest{Message: args[0]})
 			if err != nil {
 				log.Println(fmt.Errorf("Failed to send message to gRPC server: %w", err))
 				return

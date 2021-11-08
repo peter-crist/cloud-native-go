@@ -23,8 +23,10 @@ func main() {
 
 	c := pb.NewChatClient(conn)
 	sendCmd := cmd.NewSendCmd(c)
+	cbCmd := cmd.NewCircuitBreakerCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
+		cbCmd,
 	)
 
 	rootCmd.Execute()

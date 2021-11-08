@@ -4,6 +4,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type RunFunc func(cmd *cobra.Command, args []string)
+
 var rootCmd = &cobra.Command{
 	Use:   "cloud-native-go",
 	Short: "Cloud native patterns implemented in Go",

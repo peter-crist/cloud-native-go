@@ -2,14 +2,25 @@ syntax = "proto3";
 package chat;
 
 service Chat {
-    rpc Send(Request) returns (Response) {}
+    rpc Send(SendRequest) returns (SendResponse) {}
+    rpc CircuitBreaker(CircuitBreakerRequest) returns (CircuitBreakerResponse) {}
 }
 
-message Request {
+message SendRequest {
     string message = 1;
 }
 
-message Response {
+message SendResponse {
     string message = 1;
     string sha = 2;
+}
+
+message CircuitBreakerRequest {
+    int32 failureThreshold = 1;
+    int32 attempts = 2;
+    int32 timeout = 3;
+}
+
+message CircuitBreakerResponse {
+    string message = 1;
 }
