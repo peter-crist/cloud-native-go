@@ -73,14 +73,14 @@ func (s *server) CircuitBreaker(
 	var result string
 	conn := cb.Breaker(slowConnection, uint(req.GetFailureThreshold()))
 	for i := 0; i < int(req.GetAttempts()); i++ {
-		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Millisecond*time.Duration(req.Timeout))
+		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*time.Duration(req.Timeout))
 		defer cancel()
 		result, err = conn(ctxWithTimeout)
-		log.Println("⏱ Waiting 0.5s before trying to connect again.")
+		log.Printf("⏱  Waiting 0.5s before trying to connect again.\n\n")
 		time.Sleep(time.Millisecond * 500) //pause to simulate slower connection attempts to showcase resetting the breaker
 	}
 
-	log.Printf("🥳 %d connection attempts complete 🥳", req.GetAttempts())
+	log.Printf("🥳 %d connection attempts complete 🥳\n", req.GetAttempts())
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to dependency after %d attempts", req.GetAttempts())
 	}
@@ -90,7 +90,7 @@ func (s *server) CircuitBreaker(
 
 func slowConnection(ctx context.Context) (string, error) {
 	duration := rand.Intn(10)
-	log.Printf("Simulating a long connection attempt for %d milliseconds", duration)
+	log.Printf("Simulating a long connection attempt for %d seconds", duration)
 	for i := 0; i < duration; i++ {
 		select {
 		case <-ctx.Done():

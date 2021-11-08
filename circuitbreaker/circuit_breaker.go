@@ -26,8 +26,10 @@ func Breaker(circuit Circuit, failureThreshold uint) Circuit {
 			shouldRetryAt := lastAttempt.Add(time.Second * 2 << excessiveAttempts)
 			if !time.Now().After(shouldRetryAt) {
 				m.RUnlock()
-				log.Println("Service unreachable, please try again later.")
+				log.Println("💥 Breaker tripped! Service unreachable, please try again later.")
 				return "", errors.New("service unreachable")
+			} else {
+				log.Println("✅ Breaker reset - ready for more connection attempts.")
 			}
 		}
 

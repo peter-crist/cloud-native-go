@@ -43,9 +43,9 @@ func NewCircuitBreakerCmd(c pb.ChatClient) *cobra.Command {
 		},
 	}
 
-	circuitBreakerCmd.Flags().IntVarP(&cbFlags.failureThreshold, "threshold", "f", 3, "Number of failed attempts to trigger breaker")
+	circuitBreakerCmd.Flags().IntVarP(&cbFlags.failureThreshold, "threshold", "f", 2, "Number of failed attempts to trigger breaker")
 	circuitBreakerCmd.Flags().IntVarP(&cbFlags.attempts, "attempts", "a", 10, "Number of connection attempts")
-	circuitBreakerCmd.Flags().IntVarP(&cbFlags.timeout, "timeout", "t", 100, "Duration in milliseconds for connection timeout")
+	circuitBreakerCmd.Flags().IntVarP(&cbFlags.timeout, "timeout", "t", 3, "Duration in seconds for connection timeout")
 
 	return circuitBreakerCmd
 }
