@@ -14,8 +14,9 @@ import (
 func NewSendCmd(c pb.ChatClient) *cobra.Command {
 	return &cobra.Command{
 		Use:   "send",
-		Short: "short",
-		Long:  `long`,
+		Short: "Simple request/response command to validate communication with the gRPC server is established",
+		Long: `Sends an input message to the gRPC server which simulates a variable processing time and returns
+SHA of the received message.`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 1 {
 				return errors.New("send command did not receive the correct amount of arguments (1)")

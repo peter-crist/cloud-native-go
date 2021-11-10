@@ -9,12 +9,17 @@ Building CLI client to communicate with the gRPC Server:
 
 Run a Hello World example:
 `Ensure gRPC server is running and CLI binary is built`
-`make helloworld`
+`make send`
 
 Generate protofile:
 `make generate`
 
-# ToDo
-- Serve via Docker
-- Potentially run serve as CLI command so it can be customized for various pattern examples
-- Start implementing patterns
+## Circuit Breaker
+To demonstrate the CircuitBreaker pattern, start the gRPC server with `make serve`.
+In another tab, run `make circuitbreaker`.
+If using the CLI tool, you can run `bin/client cb` and pass custom parameters to tweak the demo output.
+
+Observe the log output from the server which showcases the Circuit Breaker in action!
+
+## Debounce
+To demonstrate a Debounce pattern, start the gRPC server with `make serve`.

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	cb "github.com/peter-crist/cloud-native-go/circuitbreaker"
+	"github.com/peter-crist/cloud-native-go/debounce"
 	pb "github.com/peter-crist/cloud-native-go/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -67,15 +68,18 @@ func (s *server) CircuitBreaker(
 	ctx context.Context,
 	req *pb.CircuitBreakerRequest,
 ) (
-	resp *pb.CircuitBreakerResponse,
-	err error,
+	*pb.CircuitBreakerResponse,
+	error,
 ) {
-	var result string
+	var (
+		resp string
+		err  error
+	)
 	conn := cb.Breaker(slowConnection, uint(req.GetFailureThreshold()))
 	for i := 0; i < int(req.GetAttempts()); i++ {
 		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*time.Duration(req.Timeout))
 		defer cancel()
-		result, err = conn(ctxWithTimeout)
+		resp, err = conn(ctxWithTimeout)
 		log.Printf("⏱  Waiting 0.5s before trying to connect again.\n\n")
 		time.Sleep(time.Millisecond * 500) //pause to simulate slower connection attempts to showcase resetting the breaker
 	}
@@ -85,7 +89,35 @@ func (s *server) CircuitBreaker(
 		return nil, fmt.Errorf("Failed to connect to dependency after %d attempts", req.GetAttempts())
 	}
 
-	return &pb.CircuitBreakerResponse{Message: result}, nil
+	return &pb.CircuitBreakerResponse{Message: resp}, nil
+}
+
+func (s *server) Debounce(
+	ctx context.Context,
+	req *pb.DebounceRequest,
+) (
+	*pb.DebounceResponse,
+	error,
+) {
+	var resp string
+	attempts := req.GetAttempts()
+
+	conn := debounce.DebounceFirst(
+		func(ctx context.Context) (string, error) {
+			return "success", nil
+		},
+		time.Duration(req.GetDuration()),
+	)
+
+	log.Printf("💻 Spamming %d connection attempts\n", attempts)
+	for i := 0; i < int(attempts); i++ {
+		resp, _ = conn(ctx)
+		log.Printf("⏱ Waiting %dms before a new connection attempt...\n", req.GetDelay())
+		time.Sleep(time.Millisecond * time.Duration(req.GetDelay()))
+	}
+
+	log.Printf("🥳 %d/%d connection attempts complete 🥳\n", attempts, attempts)
+	return &pb.DebounceResponse{Message: resp}, nil
 }
 
 func slowConnection(ctx context.Context) (string, error) {
@@ -105,6 +137,3 @@ func slowConnection(ctx context.Context) (string, error) {
 	log.Println(success)
 	return success, nil
 }
-
-//Heres what going to happen:
-// user enters cb -f 3 -a 100 -t 10

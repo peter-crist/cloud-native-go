@@ -4,6 +4,7 @@ package chat;
 service Chat {
     rpc Send(SendRequest) returns (SendResponse) {}
     rpc CircuitBreaker(CircuitBreakerRequest) returns (CircuitBreakerResponse) {}
+    rpc Debounce(DebounceRequest) returns (DebounceResponse) {}
 }
 
 message SendRequest {
@@ -22,5 +23,15 @@ message CircuitBreakerRequest {
 }
 
 message CircuitBreakerResponse {
+    string message = 1;
+}
+
+message DebounceRequest {
+    int32 duration = 1;
+    int32 attempts = 2;
+    int32 delay = 3;
+}
+
+message DebounceResponse {
     string message = 1;
 }

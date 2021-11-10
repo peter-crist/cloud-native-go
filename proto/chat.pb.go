@@ -241,6 +241,116 @@ func (x *CircuitBreakerResponse) GetMessage() string {
 	return ""
 }
 
+type DebounceRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Duration int32 `protobuf:"varint,1,opt,name=duration,proto3" json:"duration,omitempty"`
+	Attempts int32 `protobuf:"varint,2,opt,name=attempts,proto3" json:"attempts,omitempty"`
+	Delay    int32 `protobuf:"varint,3,opt,name=delay,proto3" json:"delay,omitempty"`
+}
+
+func (x *DebounceRequest) Reset() {
+	*x = DebounceRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DebounceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DebounceRequest) ProtoMessage() {}
+
+func (x *DebounceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DebounceRequest.ProtoReflect.Descriptor instead.
+func (*DebounceRequest) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *DebounceRequest) GetDuration() int32 {
+	if x != nil {
+		return x.Duration
+	}
+	return 0
+}
+
+func (x *DebounceRequest) GetAttempts() int32 {
+	if x != nil {
+		return x.Attempts
+	}
+	return 0
+}
+
+func (x *DebounceRequest) GetDelay() int32 {
+	if x != nil {
+		return x.Delay
+	}
+	return 0
+}
+
+type DebounceResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *DebounceResponse) Reset() {
+	*x = DebounceResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_chat_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DebounceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DebounceResponse) ProtoMessage() {}
+
+func (x *DebounceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DebounceResponse.ProtoReflect.Descriptor instead.
+func (*DebounceResponse) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *DebounceResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_proto_chat_proto protoreflect.FileDescriptor
 
 var file_proto_chat_proto_rawDesc = []byte{
@@ -262,16 +372,29 @@ var file_proto_chat_proto_rawDesc = []byte{
 	0x07, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x22, 0x32, 0x0a, 0x16, 0x43, 0x69, 0x72, 0x63,
 	0x75, 0x69, 0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x86, 0x01, 0x0a,
-	0x04, 0x43, 0x68, 0x61, 0x74, 0x12, 0x2f, 0x0a, 0x04, 0x53, 0x65, 0x6e, 0x64, 0x12, 0x11, 0x2e,
-	0x63, 0x68, 0x61, 0x74, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x12, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0e, 0x43, 0x69, 0x72, 0x63, 0x75, 0x69,
-	0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x12, 0x1b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e,
-	0x43, 0x69, 0x72, 0x63, 0x75, 0x69, 0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x69, 0x72,
-	0x63, 0x75, 0x69, 0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x5f, 0x0a, 0x0f,
+	0x44, 0x65, 0x62, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x1a, 0x0a, 0x08, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x08, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x61,
+	0x74, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x61,
+	0x74, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x64, 0x65, 0x6c, 0x61, 0x79,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x64, 0x65, 0x6c, 0x61, 0x79, 0x22, 0x2c, 0x0a,
+	0x10, 0x44, 0x65, 0x62, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0xc3, 0x01, 0x0a, 0x04,
+	0x43, 0x68, 0x61, 0x74, 0x12, 0x2f, 0x0a, 0x04, 0x53, 0x65, 0x6e, 0x64, 0x12, 0x11, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x12, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4d, 0x0a, 0x0e, 0x43, 0x69, 0x72, 0x63, 0x75, 0x69, 0x74,
+	0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x12, 0x1b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43,
+	0x69, 0x72, 0x63, 0x75, 0x69, 0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x69, 0x72, 0x63,
+	0x75, 0x69, 0x74, 0x42, 0x72, 0x65, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x08, 0x44, 0x65, 0x62, 0x6f, 0x75, 0x6e, 0x63, 0x65,
+	0x12, 0x15, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x44, 0x65, 0x62, 0x6f, 0x75, 0x6e, 0x63, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x44,
+	0x65, 0x62, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -286,20 +409,24 @@ func file_proto_chat_proto_rawDescGZIP() []byte {
 	return file_proto_chat_proto_rawDescData
 }
 
-var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_chat_proto_goTypes = []interface{}{
 	(*SendRequest)(nil),            // 0: chat.SendRequest
 	(*SendResponse)(nil),           // 1: chat.SendResponse
 	(*CircuitBreakerRequest)(nil),  // 2: chat.CircuitBreakerRequest
 	(*CircuitBreakerResponse)(nil), // 3: chat.CircuitBreakerResponse
+	(*DebounceRequest)(nil),        // 4: chat.DebounceRequest
+	(*DebounceResponse)(nil),       // 5: chat.DebounceResponse
 }
 var file_proto_chat_proto_depIdxs = []int32{
 	0, // 0: chat.Chat.Send:input_type -> chat.SendRequest
 	2, // 1: chat.Chat.CircuitBreaker:input_type -> chat.CircuitBreakerRequest
-	1, // 2: chat.Chat.Send:output_type -> chat.SendResponse
-	3, // 3: chat.Chat.CircuitBreaker:output_type -> chat.CircuitBreakerResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: chat.Chat.Debounce:input_type -> chat.DebounceRequest
+	1, // 3: chat.Chat.Send:output_type -> chat.SendResponse
+	3, // 4: chat.Chat.CircuitBreaker:output_type -> chat.CircuitBreakerResponse
+	5, // 5: chat.Chat.Debounce:output_type -> chat.DebounceResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -359,6 +486,30 @@ func file_proto_chat_proto_init() {
 				return nil
 			}
 		}
+		file_proto_chat_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DebounceRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_chat_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DebounceResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -366,7 +517,7 @@ func file_proto_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -394,6 +545,7 @@ const _ = grpc.SupportPackageIsVersion6
 type ChatClient interface {
 	Send(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*SendResponse, error)
 	CircuitBreaker(ctx context.Context, in *CircuitBreakerRequest, opts ...grpc.CallOption) (*CircuitBreakerResponse, error)
+	Debounce(ctx context.Context, in *DebounceRequest, opts ...grpc.CallOption) (*DebounceResponse, error)
 }
 
 type chatClient struct {
@@ -422,10 +574,20 @@ func (c *chatClient) CircuitBreaker(ctx context.Context, in *CircuitBreakerReque
 	return out, nil
 }
 
+func (c *chatClient) Debounce(ctx context.Context, in *DebounceRequest, opts ...grpc.CallOption) (*DebounceResponse, error) {
+	out := new(DebounceResponse)
+	err := c.cc.Invoke(ctx, "/chat.Chat/Debounce", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServer is the server API for Chat service.
 type ChatServer interface {
 	Send(context.Context, *SendRequest) (*SendResponse, error)
 	CircuitBreaker(context.Context, *CircuitBreakerRequest) (*CircuitBreakerResponse, error)
+	Debounce(context.Context, *DebounceRequest) (*DebounceResponse, error)
 }
 
 // UnimplementedChatServer can be embedded to have forward compatible implementations.
@@ -437,6 +599,9 @@ func (*UnimplementedChatServer) Send(context.Context, *SendRequest) (*SendRespon
 }
 func (*UnimplementedChatServer) CircuitBreaker(context.Context, *CircuitBreakerRequest) (*CircuitBreakerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CircuitBreaker not implemented")
+}
+func (*UnimplementedChatServer) Debounce(context.Context, *DebounceRequest) (*DebounceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Debounce not implemented")
 }
 
 func RegisterChatServer(s *grpc.Server, srv ChatServer) {
@@ -479,6 +644,24 @@ func _Chat_CircuitBreaker_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Chat_Debounce_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebounceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServer).Debounce(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Chat/Debounce",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServer).Debounce(ctx, req.(*DebounceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Chat_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.Chat",
 	HandlerType: (*ChatServer)(nil),
@@ -490,6 +673,10 @@ var _Chat_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CircuitBreaker",
 			Handler:    _Chat_CircuitBreaker_Handler,
+		},
+		{
+			MethodName: "Debounce",
+			Handler:    _Chat_Debounce_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

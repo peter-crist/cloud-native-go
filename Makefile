@@ -4,7 +4,7 @@ build-client:
 serve:
 	go run main.go
 
-helloworld:
+send:
 	bin/client send "Hello World"
 
 generate:

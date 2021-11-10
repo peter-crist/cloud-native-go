@@ -10,8 +10,7 @@ var rootCmd = &cobra.Command{
 	Use:   "cloud-native-go",
 	Short: "Cloud native patterns implemented in Go",
 	Long: `
-A gRPC server/client that can be used to showcase various distributed computing patterns.
-For example, circuit breakers or debounce`,
+A gRPC client that can be used to showcase various distributed computing patterns.`,
 }
 
 func InitRootCmd(subcommands ...*cobra.Command) *cobra.Command {
