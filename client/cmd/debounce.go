@@ -57,7 +57,7 @@ Example with a duration of 3s, 50 total attempts, and a 200ms request delay:
 		},
 	}
 
-	debounceCmd.Flags().IntVarP(&debFlags.duration, "duration", "t", 3, "Duration of request clusters")
+	debounceCmd.Flags().IntVarP(&debFlags.duration, "duration", "t", 3, "Duration of request clusters in seconds")
 	debounceCmd.Flags().IntVarP(&debFlags.attempts, "attempts", "a", 50, "Number of connection attempts")
 	debounceCmd.Flags().IntVarP(&debFlags.delay, "delay", "d", 200, "Delay in milliseconds before next connection attempt")
 

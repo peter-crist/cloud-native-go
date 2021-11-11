@@ -16,10 +16,14 @@ Generate protofile:
 
 ## Circuit Breaker
 To demonstrate the CircuitBreaker pattern, start the gRPC server with `make serve`.
-In another tab, run `make circuitbreaker`.
+In another terminal, run `make circuitbreaker`.
 If using the CLI tool, you can run `bin/client cb` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases the Circuit Breaker in action!
 
 ## Debounce
 To demonstrate a Debounce pattern, start the gRPC server with `make serve`.
+In another terminal, run `make debounce`.
+If using the CLI tool, you can run `bin/client debounce` and pass custom parameters to tweak the demo output.
+
+Observe the log output from the server which showcases restricting clusters of requests.

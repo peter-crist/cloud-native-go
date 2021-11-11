@@ -102,11 +102,12 @@ func (s *server) Debounce(
 	var resp string
 	attempts := req.GetAttempts()
 
+	log.Println(req.GetDuration())
 	conn := debounce.DebounceFirst(
 		func(ctx context.Context) (string, error) {
 			return "success", nil
 		},
-		time.Duration(req.GetDuration()),
+		time.Second*time.Duration(req.GetDuration()),
 	)
 
 	log.Printf("💻 Spamming %d connection attempts\n", attempts)

@@ -21,10 +21,11 @@ func DebounceFirst(circuit Circuit, d time.Duration) Circuit {
 		m.Lock()
 
 		defer func() {
-			threshold = time.Now().Add(d)
 			m.Unlock()
 		}()
 
+		log.Println(threshold.Format(time.RFC3339))
+		log.Println(time.Now().Format(time.RFC3339))
 		if time.Now().Before(threshold) {
 			log.Printf("❌ You are being rate limited. Returning most recent results.")
 			return result, err
@@ -32,6 +33,7 @@ func DebounceFirst(circuit Circuit, d time.Duration) Circuit {
 
 		result, err = circuit(ctx)
 		log.Printf("✅ New result received.")
+		threshold = time.Now().Add(d)
 		return result, err
 	}
 }
