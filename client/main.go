@@ -25,10 +25,12 @@ func main() {
 	sendCmd := cmd.NewSendCmd(c)
 	cbCmd := cmd.NewCircuitBreakerCmd(c)
 	debounceCmd := cmd.NewDebounceCmd(c)
+	retryCmd := cmd.NewRetryCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
 		debounceCmd,
+		retryCmd,
 	)
 
 	rootCmd.Execute()

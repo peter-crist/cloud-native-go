@@ -39,7 +39,7 @@ Example with a duration of 3s, 50 total attempts, and a 200ms request delay:
 `,
 		Run: func(cmd *cobra.Command, args []string) {
 			log.Printf("Calling Debounce with: %+v\n", debFlags)
-			resp, err := c.Debounce(
+			resp, err := c.DemoDebounce(
 				context.Background(),
 				&pb.DebounceRequest{
 					Duration: int32(debFlags.duration),

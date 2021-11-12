@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -12,6 +13,7 @@ import (
 	cb "github.com/peter-crist/cloud-native-go/circuitbreaker"
 	"github.com/peter-crist/cloud-native-go/debounce"
 	pb "github.com/peter-crist/cloud-native-go/proto"
+	"github.com/peter-crist/cloud-native-go/retry"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -64,7 +66,7 @@ func (s *server) Send(
 
 //CircuitBreaker takes in a request which specifies the desired failureThreshold and demonstrates
 //the CircuitBreaker pattern with a pseudorandomally failing dependency
-func (s *server) CircuitBreaker(
+func (s *server) DemoCircuitBreaker(
 	ctx context.Context,
 	req *pb.CircuitBreakerRequest,
 ) (
@@ -92,7 +94,7 @@ func (s *server) CircuitBreaker(
 	return &pb.CircuitBreakerResponse{Message: resp}, nil
 }
 
-func (s *server) Debounce(
+func (s *server) DemoDebounce(
 	ctx context.Context,
 	req *pb.DebounceRequest,
 ) (
@@ -121,7 +123,41 @@ func (s *server) Debounce(
 	return &pb.DebounceResponse{Message: resp}, nil
 }
 
+func (s *server) DemoRetry(
+	ctx context.Context,
+	req *pb.RetryRequest,
+) (
+	*pb.RetryResponse,
+	error,
+) {
+	conn := retry.Retry(
+		emulateTransientError,
+		int(req.GetCount()),
+		time.Millisecond*time.Duration(req.GetDelay()),
+	)
+	resp, err := conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RetryResponse{Message: resp}, nil
+}
+
+func emulateTransientError(ctx context.Context) (string, error) {
+	//randomly return error
+	rand.Seed(time.Now().UnixNano())
+	prob := 3
+
+	isError := rand.Intn(10) > prob //roughly 1 in 3 calls will return an error
+	if isError {
+		return "", errors.New("❌ FAILED ❌")
+	}
+
+	return "✅ SUCCESS ✅", nil
+}
+
 func slowConnection(ctx context.Context) (string, error) {
+	rand.Seed(time.Now().UnixNano())
 	duration := rand.Intn(10)
 	log.Printf("Simulating a long connection attempt for %d seconds", duration)
 	for i := 0; i < duration; i++ {

@@ -27,3 +27,10 @@ In another terminal, run `make debounce`.
 If using the CLI tool, you can run `bin/client debounce` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases restricting clusters of requests.
+
+## Retry
+To demonstrate a Retry pattern, start the gRPC server with `make serve`.
+In another terminal, run `make retry`.
+If using the CLI tool, you can run `bin/client retry` and pass custom parameters to tweak the demo output.
+
+Observe the log output from the server which showcases retrying given transient errors.

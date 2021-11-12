@@ -7,11 +7,15 @@ serve:
 send:
 	bin/client send "Hello World"
 
-circuitbreaker:
-	bin/client cb
+.PHONY: circuitbreaker debounce retry
+circuitbreaker: 
+		bin/client cb
 
 debounce:
 	bin/client debounce
+
+retry:
+	bin/client retry
 
 generate:
 	protoc -I . ./proto/chat.proto --go_out=plugins=grpc:.

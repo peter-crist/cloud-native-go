@@ -39,7 +39,7 @@ Example with a failure threshold of 3, 5 total attempts, and a 10 second timeout
 		`,
 		Run: func(cmd *cobra.Command, args []string) {
 			log.Printf("Calling CircuitBreaker with: %+v\n", cbFlags)
-			resp, err := c.CircuitBreaker(
+			resp, err := c.DemoCircuitBreaker(
 				context.Background(),
 				&pb.CircuitBreakerRequest{
 					FailureThreshold: int32(cbFlags.failureThreshold),
