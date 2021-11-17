@@ -34,3 +34,10 @@ In another terminal, run `make retry`.
 If using the CLI tool, you can run `bin/client retry` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases retrying given transient errors.
+
+## Throttle
+To demonstrate a Throttle pattern, start the gRPC server with `make serve`.
+In another terminal, run `make throttle`.
+If using the CLI tool, you can run `bin/client throttle` and pass custom parameters to tweak the demo output.
+
+Observe the log output from the server which showcases throttling excessive requests.

@@ -14,6 +14,7 @@ import (
 	"github.com/peter-crist/cloud-native-go/debounce"
 	pb "github.com/peter-crist/cloud-native-go/proto"
 	"github.com/peter-crist/cloud-native-go/retry"
+	"github.com/peter-crist/cloud-native-go/throttle"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -141,6 +142,35 @@ func (s *server) DemoRetry(
 	}
 
 	return &pb.RetryResponse{Message: resp}, nil
+}
+
+func (s *server) DemoThrottle(
+	ctx context.Context,
+	req *pb.ThrottleRequest,
+) (
+	*pb.ThrottleResponse,
+	error,
+) {
+	var resp string
+	conn := throttle.Throttle(
+		func(ctx context.Context) (string, error) {
+			return "success", nil
+		},
+		uint(req.GetMax()),
+		uint(req.GetRefill()),
+		time.Second*time.Duration(req.GetDuration()),
+	)
+
+	attempts := req.GetAttempts()
+	log.Printf("💻 Spamming %d attempts\n", attempts)
+	for i := 0; i < int(attempts); i++ {
+		resp, _ = conn(ctx)
+		log.Printf("⏱ Waiting %dms before a new attempt...\n", 200)
+		time.Sleep(time.Millisecond * 200)
+	}
+
+	log.Printf("🥳 %d/%d connection attempts complete 🥳\n", attempts, attempts)
+	return &pb.ThrottleResponse{Message: resp}, nil
 }
 
 func emulateTransientError(ctx context.Context) (string, error) {

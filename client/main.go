@@ -26,11 +26,13 @@ func main() {
 	cbCmd := cmd.NewCircuitBreakerCmd(c)
 	debounceCmd := cmd.NewDebounceCmd(c)
 	retryCmd := cmd.NewRetryCmd(c)
+	throttleCmd := cmd.NewThrottleCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
 		debounceCmd,
 		retryCmd,
+		throttleCmd,
 	)
 
 	rootCmd.Execute()

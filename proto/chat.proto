@@ -6,6 +6,7 @@ service Chat {
     rpc DemoCircuitBreaker(CircuitBreakerRequest) returns (CircuitBreakerResponse) {}
     rpc DemoDebounce(DebounceRequest) returns (DebounceResponse) {}
     rpc DemoRetry(RetryRequest) returns (RetryResponse) {}
+    rpc DemoThrottle(ThrottleRequest) returns (ThrottleResponse) {}
 }
 
 message SendRequest {
@@ -43,5 +44,16 @@ message RetryRequest {
 }
 
 message RetryResponse {
+    string message = 1;
+}
+
+message ThrottleRequest {
+    int32 attempts = 1;
+    int32 max = 2;
+    int32 refill = 3;
+    int32 duration = 4;
+}
+
+message ThrottleResponse {
     string message = 1;
 }

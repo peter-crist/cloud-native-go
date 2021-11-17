@@ -7,7 +7,7 @@ serve:
 send:
 	bin/client send "Hello World"
 
-.PHONY: circuitbreaker debounce retry
+.PHONY: circuitbreaker debounce retry throttle
 circuitbreaker: 
 		bin/client cb
 
@@ -16,6 +16,9 @@ debounce:
 
 retry:
 	bin/client retry
+
+throttle:
+	bin/client throttle
 
 generate:
 	protoc -I . ./proto/chat.proto --go_out=plugins=grpc:.
