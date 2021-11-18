@@ -36,7 +36,7 @@ Default settings:
 Example with default settings: 
 	bin/client throttle
 Example with 200 requests, a 3 tokens, and a 3 token per 10second refill rate: 
-	bin/client retry -a 200 -m 3 -r 3 -d 10
+	bin/client timeout -a 200 -m 3 -r 3 -d 10
 `,
 		Run: func(cmd *cobra.Command, args []string) {
 			log.Printf("Calling Throttle with: %+v\n", tFlags)

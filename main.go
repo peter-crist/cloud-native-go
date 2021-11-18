@@ -15,6 +15,7 @@ import (
 	pb "github.com/peter-crist/cloud-native-go/proto"
 	"github.com/peter-crist/cloud-native-go/retry"
 	"github.com/peter-crist/cloud-native-go/throttle"
+	"github.com/peter-crist/cloud-native-go/timeout"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -173,6 +174,27 @@ func (s *server) DemoThrottle(
 	return &pb.ThrottleResponse{Message: resp}, nil
 }
 
+func (s *server) DemoTimeout(
+	ctx context.Context,
+	req *pb.TimeoutRequest,
+) (
+	*pb.TimeoutResponse,
+	error,
+) {
+	var resp string
+	conn := timeout.Timeout(
+		slowFunction(time.Second * time.Duration(req.Duration)),
+	)
+
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*time.Duration(req.Timeout))
+	defer cancel()
+	resp, err := conn(ctxWithTimeout, "input1")
+	if err != nil {
+		return nil, err
+	}
+	return &pb.TimeoutResponse{Message: resp}, nil
+}
+
 func emulateTransientError(ctx context.Context) (string, error) {
 	//randomly return error
 	rand.Seed(time.Now().UnixNano())
@@ -203,4 +225,13 @@ func slowConnection(ctx context.Context) (string, error) {
 	success := "Connection complete!"
 	log.Println(success)
 	return success, nil
+}
+
+func slowFunction(d time.Duration) timeout.SlowFunction {
+	return func(s string) (string, error) {
+		log.Printf("Received argument: %v", s)
+		log.Printf("Emulating slow function for %s", d)
+		time.Sleep(d)
+		return "✅ Slow Function completed ✅", nil
+	}
 }

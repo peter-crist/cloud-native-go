@@ -27,12 +27,14 @@ func main() {
 	debounceCmd := cmd.NewDebounceCmd(c)
 	retryCmd := cmd.NewRetryCmd(c)
 	throttleCmd := cmd.NewThrottleCmd(c)
+	timeoutCmd := cmd.NewTimeoutCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
 		debounceCmd,
 		retryCmd,
 		throttleCmd,
+		timeoutCmd,
 	)
 
 	rootCmd.Execute()
