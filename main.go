@@ -10,12 +10,15 @@ import (
 	"net"
 	"time"
 
-	cb "github.com/peter-crist/cloud-native-go/circuitbreaker"
-	"github.com/peter-crist/cloud-native-go/debounce"
 	pb "github.com/peter-crist/cloud-native-go/proto"
+
+	"github.com/peter-crist/cloud-native-go/circuitbreaker"
+	"github.com/peter-crist/cloud-native-go/debounce"
+	"github.com/peter-crist/cloud-native-go/fanin"
 	"github.com/peter-crist/cloud-native-go/retry"
 	"github.com/peter-crist/cloud-native-go/throttle"
 	"github.com/peter-crist/cloud-native-go/timeout"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -79,7 +82,7 @@ func (s *server) DemoCircuitBreaker(
 		resp string
 		err  error
 	)
-	conn := cb.Breaker(slowConnection, uint(req.GetFailureThreshold()))
+	conn := circuitbreaker.Breaker(slowConnection, uint(req.GetFailureThreshold()))
 	for i := 0; i < int(req.GetAttempts()); i++ {
 		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*time.Duration(req.Timeout))
 		defer cancel()
@@ -193,6 +196,46 @@ func (s *server) DemoTimeout(
 		return nil, err
 	}
 	return &pb.TimeoutResponse{Message: resp}, nil
+}
+
+func (s *server) DemoFanIn(
+	ctx context.Context,
+	req *pb.FanInRequest,
+) (
+	*pb.FanInResponse,
+	error,
+) {
+	// Race condition here. It is finishing somehow before all values are added to the sources.
+	// Need to inspect fanin function.
+
+	var resp string
+	sources := make([]<-chan int, 0) // Create an empty channel slice
+
+	for i := 1; i <= int(req.SourceCount); i++ {
+		i := i
+		ch := make(chan int)
+		sources = append(sources, ch) // Create a channel; add to sources
+
+		go func() { // Run a toy goroutine for each
+			defer close(ch) // Close ch when the routine ends
+
+			rand.Seed(time.Now().UnixNano())
+			count := rand.Intn(10)
+			log.Printf("Source #%d set to count up to %d\n", i, count)
+			for j := 1; j <= rand.Intn(10); j++ {
+				// Each sent value will correspond to its specific channel indicated by the initial digits
+				// Ex. 34 is the 3rd source with and 4th value
+				ch <- (i*10 + j)
+				time.Sleep(time.Second)
+			}
+		}()
+	}
+
+	dest := fanin.Funnel(sources...)
+	for d := range dest {
+		log.Println(d)
+	}
+	return &pb.FanInResponse{Message: resp}, nil
 }
 
 func emulateTransientError(ctx context.Context) (string, error) {

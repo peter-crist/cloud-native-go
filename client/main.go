@@ -28,6 +28,7 @@ func main() {
 	retryCmd := cmd.NewRetryCmd(c)
 	throttleCmd := cmd.NewThrottleCmd(c)
 	timeoutCmd := cmd.NewTimeoutCmd(c)
+	fanInCmd := cmd.NewFanInCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
@@ -35,6 +36,7 @@ func main() {
 		retryCmd,
 		throttleCmd,
 		timeoutCmd,
+		fanInCmd,
 	)
 
 	rootCmd.Execute()

@@ -14,38 +14,44 @@ Run a Hello World example:
 Generate protofile:
 `make generate`
 
-## Circuit Breaker
+## Stability Patterns
+
+### Circuit Breaker
 To demonstrate the CircuitBreaker pattern, start the gRPC server with `make serve`.
 In another terminal, run `make circuitbreaker`.
 If using the CLI tool, you can run `bin/client cb` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases the Circuit Breaker in action!
 
-## Debounce
+### Debounce
 To demonstrate a Debounce pattern, start the gRPC server with `make serve`.
 In another terminal, run `make debounce`.
 If using the CLI tool, you can run `bin/client debounce` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases restricting clusters of requests.
 
-## Retry
+### Retry
 To demonstrate a Retry pattern, start the gRPC server with `make serve`.
 In another terminal, run `make retry`.
 If using the CLI tool, you can run `bin/client retry` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases retrying given transient errors.
 
-## Throttle
+### Throttle
 To demonstrate a Throttle pattern, start the gRPC server with `make serve`.
 In another terminal, run `make throttle`.
 If using the CLI tool, you can run `bin/client throttle` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server which showcases throttling excessive requests.
 
-## Timeout
+### Timeout
 To demonstrate a Timeout pattern, start the gRPC server with `make serve`.
 In another terminal, run `make timeout`.
 If using the CLI tool, you can run `bin/client timeout` and pass custom parameters to tweak the demo output.
 
 Observe the log output from the server and the returned responses to observe that we can successfully wrap a timeout
 around a given slow function, even if that function is out of our control and doesn't accept a context.
+
+## Concurrency Patterns
+
+### Fan-In
