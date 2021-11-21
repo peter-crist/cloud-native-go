@@ -1,7 +1,6 @@
 package fanin
 
 import (
-	"log"
 	"sync"
 )
 
@@ -14,7 +13,6 @@ func Funnel(sources ...<-chan int) <-chan int {
 		go func(c <-chan int) {
 			defer wg.Done() // Notify WaitGroup when c closes
 			for n := range c {
-				log.Printf("Adding value %d to dst", n)
 				dst <- n
 			}
 		}(ch)

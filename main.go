@@ -212,29 +212,33 @@ func (s *server) DemoFanIn(
 	sources := make([]<-chan int, 0) // Create an empty channel slice
 
 	for i := 1; i <= int(req.SourceCount); i++ {
-		i := i
 		ch := make(chan int)
 		sources = append(sources, ch) // Create a channel; add to sources
 
-		go func() { // Run a toy goroutine for each
+		go func(channel_id int) { // Run a toy goroutine for each
 			defer close(ch) // Close ch when the routine ends
 
 			rand.Seed(time.Now().UnixNano())
-			count := rand.Intn(10)
-			log.Printf("Source #%d set to count up to %d\n", i, count)
-			for j := 1; j <= rand.Intn(10); j++ {
+			count := rand.Intn(9) + 1
+			log.Printf("Source #%d set to count up to %d", channel_id, count)
+			for j := 1; j <= count; j++ {
 				// Each sent value will correspond to its specific channel indicated by the initial digits
 				// Ex. 34 is the 3rd source with and 4th value
-				ch <- (i*10 + j)
+				val := channel_id*10 + j
+				log.Printf("➕ Adding %d to source channel #%d ➕", val, channel_id)
+				ch <- val
 				time.Sleep(time.Second)
 			}
-		}()
+			log.Printf("✅ All %d values pushed to channel #%d. Closing channel... ✅", count, channel_id)
+		}(i)
 	}
 
 	dest := fanin.Funnel(sources...)
 	for d := range dest {
-		log.Println(d)
+		log.Printf("📖 Reading %d off destination channel 📖", d)
 	}
+
+	log.Printf("🥳 All values successfully fanned-in 🥳")
 	return &pb.FanInResponse{Message: resp}, nil
 }
 

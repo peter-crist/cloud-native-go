@@ -33,7 +33,7 @@ Example with 10 source channels to fan in:
 	bin/client fanin -s 10
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			log.Printf("Calling FanIn with: %+v\n", rFlags)
+			log.Printf("Calling FanIn with: %+v\n", fiFlags)
 			resp, err := c.DemoFanIn(
 				context.Background(),
 				&pb.FanInRequest{
