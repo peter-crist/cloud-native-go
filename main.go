@@ -8,8 +8,10 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"sync"
 	"time"
 
+	"github.com/peter-crist/cloud-native-go/fanout"
 	pb "github.com/peter-crist/cloud-native-go/proto"
 
 	"github.com/peter-crist/cloud-native-go/circuitbreaker"
@@ -205,9 +207,6 @@ func (s *server) DemoFanIn(
 	*pb.FanInResponse,
 	error,
 ) {
-	// Race condition here. It is finishing somehow before all values are added to the sources.
-	// Need to inspect fanin function.
-
 	var resp string
 	sources := make([]<-chan int, 0) // Create an empty channel slice
 
@@ -240,6 +239,40 @@ func (s *server) DemoFanIn(
 
 	log.Printf("🥳 All values successfully fanned-in 🥳")
 	return &pb.FanInResponse{Message: resp}, nil
+}
+
+func (s *server) DemoFanOut(
+	ctx context.Context,
+	req *pb.FanOutRequest,
+) (
+	*pb.FanOutResponse,
+	error,
+) {
+	source := make(chan int)                                      // The input channel
+	dests := fanout.Split(source, int(req.GetDestinationCount())) // Retrieve output channels
+
+	go func() { // Send the number 1..n to source
+		defer close(source)
+		for i := 1; i <= int(req.GetSourceCount()); i++ {
+			source <- i
+		}
+	}()
+
+	var wg sync.WaitGroup // Use WaitGroup to wait until
+	wg.Add(len(dests))    // the output channels all close
+
+	for i, ch := range dests {
+		go func(i int, d <-chan int) {
+			defer wg.Done()
+
+			for val := range d {
+				fmt.Printf("#%d channel got value %d\n", i, val)
+			}
+		}(i, ch)
+	}
+
+	wg.Wait()
+	return &pb.FanOutResponse{Message: "Complete"}, nil
 }
 
 func emulateTransientError(ctx context.Context) (string, error) {

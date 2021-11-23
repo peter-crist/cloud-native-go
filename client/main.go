@@ -29,6 +29,7 @@ func main() {
 	throttleCmd := cmd.NewThrottleCmd(c)
 	timeoutCmd := cmd.NewTimeoutCmd(c)
 	fanInCmd := cmd.NewFanInCmd(c)
+	fanOutCmd := cmd.NewFanOutCmd(c)
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
@@ -37,6 +38,7 @@ func main() {
 		throttleCmd,
 		timeoutCmd,
 		fanInCmd,
+		fanOutCmd,
 	)
 
 	rootCmd.Execute()

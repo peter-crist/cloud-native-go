@@ -9,6 +9,7 @@ service Chat {
     rpc DemoThrottle(ThrottleRequest) returns (ThrottleResponse) {}
     rpc DemoTimeout(TimeoutRequest) returns (TimeoutResponse) {}
     rpc DemoFanIn(FanInRequest) returns (FanInResponse) {}
+    rpc DemoFanOut(FanOutRequest) returns (FanOutResponse) {}
 }
 
 message SendRequest {
@@ -74,5 +75,14 @@ message FanInRequest {
 }
 
 message FanInResponse {
+    string message = 1;
+}
+
+message FanOutRequest {
+    int32 source_count = 1;
+    int32 destination_count = 2;
+}
+
+message FanOutResponse {
     string message = 1;
 }
