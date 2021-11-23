@@ -71,3 +71,10 @@ In the example below, the value of 12 that is read of the destination channel in
 2021/11/21 13:17:56 📖 Reading 22 off destination channel 📖
 2021/11/21 13:17:57 ➕ Adding 13 to source channel #1 ➕
 ```
+
+### Fan-Out
+To demonstrate a Fan-Out pattern in which a source channel can split its values between multiple competing destination channels, start with `make serve`.
+In another terminal, run `make fanout`.
+If using the CLI tool, you can run `bin/client fanout` and pass custom parameters to tweak the demo output.
+
+Observe the log output from the server to see that different channels are getting distinct source values. It noteably isn't implemented as round-robin so some destination channels may receieve multiple and some may receive none. They compete to avoid the issue that could occur if a destination channel isn't ready to receive yet (a slow worker).
