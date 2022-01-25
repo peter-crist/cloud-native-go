@@ -10,6 +10,7 @@ service Chat {
     rpc DemoTimeout(TimeoutRequest) returns (TimeoutResponse) {}
     rpc DemoFanIn(FanInRequest) returns (FanInResponse) {}
     rpc DemoFanOut(FanOutRequest) returns (FanOutResponse) {}
+    rpc DemoTimeoutAndRetry(TimeoutAndRetryRequest) returns (TimeoutAndRetryResponse) {}
 }
 
 message SendRequest {
@@ -84,5 +85,16 @@ message FanOutRequest {
 }
 
 message FanOutResponse {
+    string message = 1;
+}
+
+message TimeoutAndRetryRequest {
+    int32 count = 1;
+    int32 delay = 2;
+    int32 duration = 3;
+    int32 timeout = 4;
+}
+
+message TimeoutAndRetryResponse {
     string message = 1;
 }

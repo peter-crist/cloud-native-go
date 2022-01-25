@@ -30,6 +30,9 @@ func main() {
 	timeoutCmd := cmd.NewTimeoutCmd(c)
 	fanInCmd := cmd.NewFanInCmd(c)
 	fanOutCmd := cmd.NewFanOutCmd(c)
+
+	timeoutAndRetryCmd := cmd.NewTimeoutAndRetryCmd(c)
+
 	rootCmd := cmd.InitRootCmd(
 		sendCmd,
 		cbCmd,
@@ -39,6 +42,7 @@ func main() {
 		timeoutCmd,
 		fanInCmd,
 		fanOutCmd,
+		timeoutAndRetryCmd,
 	)
 
 	rootCmd.Execute()
