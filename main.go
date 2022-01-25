@@ -39,6 +39,13 @@ func main() {
 	s := grpc.NewServer(opts...)
 	pb.RegisterChatServer(s, &server{})
 
+	// TODO pull this out into separate cmd for demoing
+	conn := retry.Retry(slowConnection, 3, 10*time.Second)
+	_, err = conn(context.Background()) //parent context passed in
+	if err != nil {
+		log.Fatalf("failed to connect")
+	}
+
 	log.Printf("gRPC server listening on port %s...\n", port)
 	if err := s.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -55,7 +62,7 @@ func (s *server) Send(
 	resp *pb.SendResponse,
 	err error,
 ) {
-	slowConnection(ctx)
+	slowConnectionWithContext(ctx)
 
 	msg := req.GetMessage()
 	log.Printf("Received: %v", msg)
@@ -84,7 +91,7 @@ func (s *server) DemoCircuitBreaker(
 		resp string
 		err  error
 	)
-	conn := circuitbreaker.Breaker(slowConnection, uint(req.GetFailureThreshold()))
+	conn := circuitbreaker.Breaker(slowConnectionWithContext, uint(req.GetFailureThreshold()))
 	for i := 0; i < int(req.GetAttempts()); i++ {
 		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*time.Duration(req.Timeout))
 		defer cancel()
@@ -288,7 +295,7 @@ func emulateTransientError(ctx context.Context) (string, error) {
 	return "✅ SUCCESS ✅", nil
 }
 
-func slowConnection(ctx context.Context) (string, error) {
+func slowConnectionWithContext(ctx context.Context) (string, error) {
 	rand.Seed(time.Now().UnixNano())
 	duration := rand.Intn(10)
 	log.Printf("Simulating a long connection attempt for %d seconds", duration)
@@ -314,4 +321,26 @@ func slowFunction(d time.Duration) timeout.SlowFunction {
 		time.Sleep(d)
 		return "✅ Slow Function completed ✅", nil
 	}
+}
+
+func slowConnection(ctx context.Context) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	rand.Seed(time.Now().UnixNano())
+	duration := rand.Intn(10)
+	log.Printf("Simulating a long connection attempt for %d seconds", duration)
+	for i := 0; i < duration; i++ {
+		select {
+		case <-ctx.Done():
+			log.Println("Failed to connect in time...")
+			return "", ctx.Err()
+		default:
+			log.Printf("%ds elapsed...", i+1)
+			time.Sleep(time.Second * 1)
+		}
+	}
+	success := "Connection complete!"
+	log.Println(success)
+	return success, nil
 }
