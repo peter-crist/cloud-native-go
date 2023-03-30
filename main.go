@@ -8,9 +8,11 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"net/http"
 	"sync"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/peter-crist/cloud-native-go/fanout"
 	pb "github.com/peter-crist/cloud-native-go/proto"
 
@@ -18,12 +20,14 @@ import (
 	"github.com/peter-crist/cloud-native-go/debounce"
 	"github.com/peter-crist/cloud-native-go/fanin"
 	"github.com/peter-crist/cloud-native-go/retry"
-	"github.com/peter-crist/cloud-native-go/throttle"
 	"github.com/peter-crist/cloud-native-go/timeout"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -40,21 +44,52 @@ func main() {
 	pb.RegisterChatServer(s, &server{})
 
 	// TODO pull this out into separate cmd for demoing
-	conn := retry.Retry(slowConnection, 3, 10*time.Second)
-	_, err = conn(context.Background()) //parent context passed in
-	if err != nil {
-		log.Fatalf("failed to connect")
-	}
+	// simulatedConnection := retry.Retry(slowConnection, 3, 10*time.Second)
+	// _, err = simulatedConnection(context.Background()) //parent context passed in
+	// if err != nil {
+	// 	log.Fatalf("failed to connect")
+	// }
 
 	log.Printf("gRPC server listening on port %s...\n", port)
-	if err := s.Serve(listener); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	go func() {
+		if err := s.Serve(listener); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
+	// Create a client connection to the gRPC server we just started
+	// This is where the gRPC-Gateway proxies the requests
+	conn, err := grpc.DialContext(
+		context.Background(),
+		fmt.Sprintf(":%s", port),
+		grpc.WithBlock(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		log.Fatalln("Failed to dial server:", err)
 	}
+
+	gwmux := runtime.NewServeMux()
+	// Register Greeter
+	err = pb.RegisterChatHandler(context.Background(), gwmux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+
+	gwServer := &http.Server{
+		Addr:    ":8090",
+		Handler: gwmux,
+	}
+
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
+	log.Fatalln(gwServer.ListenAndServe())
 }
 
-type server struct{}
+type server struct {
+	pb.UnimplementedChatServer
+}
 
-//Send takes a message, performs a pseudo-slow operation, and returns the SHA of the message input
+// Send takes a message, performs a pseudo-slow operation, and returns the SHA of the message input
 func (s *server) Send(
 	ctx context.Context,
 	req *pb.SendRequest,
@@ -78,8 +113,8 @@ func (s *server) Send(
 	}, nil
 }
 
-//CircuitBreaker takes in a request which specifies the desired failureThreshold and demonstrates
-//the CircuitBreaker pattern with a pseudorandomally failing dependency
+// CircuitBreaker takes in a request which specifies the desired failureThreshold and demonstrates
+// the CircuitBreaker pattern with a pseudorandomally failing dependency
 func (s *server) DemoCircuitBreaker(
 	ctx context.Context,
 	req *pb.CircuitBreakerRequest,
@@ -164,26 +199,27 @@ func (s *server) DemoThrottle(
 	*pb.ThrottleResponse,
 	error,
 ) {
-	var resp string
-	conn := throttle.Throttle(
-		func(ctx context.Context) (string, error) {
-			return "success", nil
-		},
-		uint(req.GetMax()),
-		uint(req.GetRefill()),
-		time.Second*time.Duration(req.GetDuration()),
-	)
+	// var resp string
+	// conn := throttle.Throttle(
+	// 	func(ctx context.Context) (string, error) {
+	// 		return "success", nil
+	// 	},
+	// 	uint(req.GetMax()),
+	// 	uint(req.GetRefill()),
+	// 	time.Second*time.Duration(req.GetDuration()),
+	// )
 
-	attempts := req.GetAttempts()
-	log.Printf("💻 Spamming %d attempts\n", attempts)
-	for i := 0; i < int(attempts); i++ {
-		resp, _ = conn(ctx)
-		log.Printf("⏱ Waiting %dms before a new attempt...\n", 200)
-		time.Sleep(time.Millisecond * 200)
-	}
+	// attempts := req.GetAttempts()
+	// log.Printf("💻 Spamming %d attempts\n", attempts)
+	// for i := 0; i < int(attempts); i++ {
+	// 	resp, _ = conn(ctx)
+	// 	log.Printf("⏱ Waiting %dms before a new attempt...\n", 200)
+	// 	time.Sleep(time.Millisecond * 200)
+	// }
 
-	log.Printf("🥳 %d/%d connection attempts complete 🥳\n", attempts, attempts)
-	return &pb.ThrottleResponse{Message: resp}, nil
+	// log.Printf("🥳 %d/%d connection attempts complete 🥳\n", attempts, attempts)
+	// return &pb.ThrottleResponse{Message: resp}, nil
+	return nil, status.Error(codes.Aborted, "cannot be null")
 }
 
 func (s *server) DemoTimeout(

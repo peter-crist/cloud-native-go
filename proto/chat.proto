@@ -1,12 +1,21 @@
 syntax = "proto3";
 package chat;
 
+option go_package = "./chat";
+
+import "google/api/annotations.proto";
+
 service Chat {
     rpc Send(SendRequest) returns (SendResponse) {}
     rpc DemoCircuitBreaker(CircuitBreakerRequest) returns (CircuitBreakerResponse) {}
     rpc DemoDebounce(DebounceRequest) returns (DebounceResponse) {}
     rpc DemoRetry(RetryRequest) returns (RetryResponse) {}
-    rpc DemoThrottle(ThrottleRequest) returns (ThrottleResponse) {}
+    rpc DemoThrottle(ThrottleRequest) returns (ThrottleResponse) {
+        option (google.api.http) = {
+            post: "/v1/chat"
+            body: "*"
+          };
+    }
     rpc DemoTimeout(TimeoutRequest) returns (TimeoutResponse) {}
     rpc DemoFanIn(FanInRequest) returns (FanInResponse) {}
     rpc DemoFanOut(FanOutRequest) returns (FanOutResponse) {}
